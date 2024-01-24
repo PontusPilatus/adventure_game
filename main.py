@@ -66,13 +66,18 @@ def play_game():
             break
 
         if direction in available_directions:
-            new_city = map_data[player.current_city][direction]
-            if player.travel_to(new_city):
-                break
-            trivia = random.choice(trivia_city[new_city])
-            print(f"\nWelcome to {new_city}, {player.name}! Did you know? {trivia}")
+            new_city = available_directions[direction]
+            if new_city:
+                player.travel_to(new_city)
+                if new_city in trivia_city:
+                    trivia = random.choice(trivia_city[new_city])
+                    print(f"\nWelcome to {new_city}, {player.name}! Did you know? {trivia}")
+                else:
+                    print(f"No trivia available for {new_city}.")
+            else:
+                print(f"No path in that direction from {player.current_city}.")
         else:
-            print(f"That's not a valid direction from {player.current_city}, {player.name}. Try again.")
+            print("Invalid choice.")
 
 
 if __name__ == "__main__":

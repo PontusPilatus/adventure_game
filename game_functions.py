@@ -1,4 +1,5 @@
 import mysql.connector
+import random
 from datetime import datetime
 from db_connection import connect_to_database
 
@@ -41,15 +42,19 @@ def cities_map():
     db.close()
     return cities_map
 
+
 def city_trivia():
     db = connect_to_database()
     cursor = db.cursor()
     cursor.execute("SELECT cities.city_name, trivia_text FROM trivia JOIN cities ON trivia.city_id = cities.city_id")
+
     city_trivia = {}
     for city, trivia in cursor:
         if city not in city_trivia:
             city_trivia[city] = []
         city_trivia[city].append(trivia)
+
     cursor.close()
     db.close()
+
     return city_trivia
