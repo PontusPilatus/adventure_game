@@ -37,10 +37,13 @@ def main():
 
 
 def play_game():
+    map_data = cities_map()
+    trivia_city = city_trivia()
+
     player_name = input("Enter your name, brave soul: ")
-    starting_city = random.choice(list(cities_map.keys()))
-    adjacent_cities = set(cities_map[starting_city].values())
-    possible_locations = [city for city in cities_map.keys() if city not in adjacent_cities and city != starting_city]
+    starting_city = random.choice(list(map_data.keys()))
+    adjacent_cities = set(filter(None, map_data[starting_city].values()))
+    possible_locations = [city for city in map_data.keys() if city not in adjacent_cities and city != starting_city]
     spettekaka_location = random.choice(possible_locations)
     player = Player(player_name, starting_city, spettekaka_location)
 
@@ -52,7 +55,8 @@ def play_game():
     print("===================================================\n")
 
     while True:
-        print(f"\n{player.name}, you are in {player.current_city}. Available directions: {', '.join(cities_map[player.current_city].keys())}")
+        available_directions = {direction: city for direction, city in map_data[player.current_city].items() if city}
+        print(f"\n{player.name}, you are in {player.current_city}. Available directions: {', '.join(available_directions.keys())}")
         print(f"Your current score is: {player.score}.")
         direction = input("Choose your direction (or type 'exit' to end your journey): ").lower()
 
@@ -61,11 +65,11 @@ def play_game():
                 f"Goodbye, {player.name}! You visited {len(player.visited_cities)} cities and scored {player.score} points. Thanks for playing!")
             break
 
-        if direction in cities_map[player.current_city]:
-            new_city = cities_map[player.current_city][direction]
+        if direction in available_directions:
+            new_city = map_data[player.current_city][direction]
             if player.travel_to(new_city):
                 break
-            trivia = random.choice(city_trivia[new_city])
+            trivia = random.choice(trivia_city[new_city])
             print(f"\nWelcome to {new_city}, {player.name}! Did you know? {trivia}")
         else:
             print(f"That's not a valid direction from {player.current_city}, {player.name}. Try again.")
